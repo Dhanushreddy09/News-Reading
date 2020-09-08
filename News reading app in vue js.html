@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>News</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" />
+        <link href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" rel="stylesheet" type="text/css">
+        <style>
+           .font{
+                font-size: 66;
+            }
+            h1{
+                text-align: center;
+                font-size: 36px;
+                font-weight: bold;
+            }
+            .author{
+                text-align: right;
+                font-size:20px;
+                width:100%;
+                height: 50px;
+            }
+            .category{
+                background-color: yellow;
+                text-align: right;
+                height:50px;
+                line-height: 50px;
+                font-size: 30px;
+            }
+            .seperator{
+                display: block;
+                height: 15px;
+            }
+            .warning{
+                border: 2px solid red;
+            }
+            .sep{
+                height:2px;
+            }
+            .content{
+                font-size: 20px;
+                height: 200px;
+                padding-top: 25px;
+                text-align: center;
+                padding-bottom: 25px;
+            }
+            @media(max-width: 1199px) and (min-width:768px){
+                .content{
+                    width: 100%;
+                    height: 100%;
+                }
+                .author{width: 100%;}
+            }
+            @media(max-width:767px){
+                .content{
+                    width: 100%;
+                    height: 100%;
+                }
+                .author{width: 100%;}
+            }
+            .buttons{
+                width: 30px;
+                height: 35px;
+                color: green;
+                background-color: tomato;
+            }
+          .buttons  .color{
+                width: 15px;
+                height: 38px;
+                color:olive;
+                background-color:red;
+            }
+            .edit{
+                text-align: center;
+                height: 500px;
+                width: 400px;
+                border: 5px ridge violet;
+                margin:0 auto;
+                border-radius: 15px;
+                position: absolute;
+                top: 10%;
+                left: 30%;
+                padding-top: 30px;
+            }
+            label{
+                font-style: cursive;
+                font-size:20px;
+                font-weight: bold;
+                color:grey;
+            }
+            .space{
+                height: 10px;
+            }
+            input,textarea{
+                padding: 12px;
+                border: 2px solid grey;
+                border-radius: 15px;
+            }
+            input:hover,textarea:hover{
+                border:2px solid orangered;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+           <div class="buttons"> <i v-if='show' v-on:click='show=!show' class="fa fa-book" style="font-size: 38px;" aria-hidden="true"></i>
+            <i  v-if='!show' v-on:click='save' class="fa fa-file color" style="font-size: 38px;" aria-hidden="true"></i>
+        </div>
+            <transition  enter-active-class="animated slideInDown"
+            leave-active-class="animated bounceOutRight
+            " mode='out-in' :duration='1000' mode='out-in'> 
+            <div v-if='show' key='r'>
+                <reading-comp :title='title' :author='author' :date='date' :category='category' :theme_color='category_theme_color[category]'><div class="content">{{article}}</div></reading-comp>  
+            </div>
+            <div class="edit" v-if='!show' key='e'>
+                <label>Article Title</label>
+                <div class="space"></div>
+                <input  v-model='title'>
+                <div class="seperator"></div>
+                <label>Article Author</label>
+                <div class="space"></div>
+                <input   v-model='author'>
+                <div class="seperator"></div>
+                <label style="text-align: left;">Article category</label>
+                <div class="space"></div>
+                <ul>
+                    <li style='list-style-type: none;'v-for='element in category_list'>
+                        <label style=" color: black;font-weight:normal">{{element}}</label>
+                        <input type="radio" v-bind:value='element' v-model='category'>
+                    </li>
+                </ul>
+                <div class="seperator"></div>
+                <label>Article Content</label>
+                <div class="space"></div>
+               <textarea  v-bind:class='{warning:!remain}'  v-model='article' v-on:input='check'></textarea><span>{{remain}}/{{limit}}</span>
+            </div>
+        </transition>
+        </div>
+        <template id='reading_mode'>
+            <div>
+                <h1>{{title}}</h1>
+                <div class="sep"  v-bind:style='{background:theme_color}'></div>
+                <slot></slot>
+                <div class="sep"  v-bind:style='{background:theme_color}'></div>
+               <div class="author"> <p>created by <b><span>{{author}}</span></b> and last edited on <b><span>{{date}}</span></b></p></div>
+               <div class="category"  v-bind:style='{background:theme_color}'> <p>{{category}}</p></div>
+            </div>
+        </template>
+        <template id="editing_mode">
+            <div>
+                  
+            </div>
+        </template>
+        <script>
+            Vue.component('reading-comp',{
+                template:'#reading_mode',
+                data:function(){
+                      return{}
+                },
+                props:['title','author','date','category','theme_color']
+            })
+            var vm=new Vue({
+                el:'#app',
+                data:{
+                    limit:1200,
+                   show:true,
+                   category:'News',
+                   article:'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+                   author:'Loreum',
+                   title:'Ipsum',
+                   date:2017,
+                   category_list:['Web','News','Entertainment','Science','Sports'],
+                   category_theme_color:{
+                        Web:'crimson',
+                        News:'green',
+                        Entertainment:'pink',
+                        Science:'blue',
+                        Sports:'Yellow'
+                   }
+                },
+                computed:{
+                         remain:function(){
+                             return this.limit-this.article.length
+                         }
+                },
+                methods:{
+                    save:function(){
+                        var date=new Date()
+                        var year=String(date.getFullYear())
+                       var year_two_digit="'"+year.substr(2,2)
+                       var month=date.getMonth()+1
+                       switch(month){
+                               case 1:
+                                month_str='Jan'
+                                break;
+                               case 2:
+                                month_str='Feb'
+                                break;
+                               case 3:
+                                month_str='Mar'
+                                break;
+                               case 4:
+                                month_str='Apr'
+                                break;
+                               case 5:
+                                month_str='May'
+                                break;
+                               case 6:
+                               month_str='Jun'
+                               break;
+                               case 7:
+                                month_str='Jul'
+                                break;
+                               case 8:
+                                month_str='Aug'
+                                break;
+                               case 9:
+                                month_str='Sep'
+                                break;
+                               case 10:
+                                month_str='Oct'
+                                break;
+                               case 11:
+                                month_str='Nov'
+                                break;
+                               case 12:
+                                month_str='Dec'
+                                break;
+                       }
+                       var day=date.getDate()
+                       if(day<=9){
+                           day='0'+day
+                       }
+                       var hour=date.getHours()
+                       var minutes=date.getMinutes()
+                       var seconds=date.getSeconds()
+                       var time=hour+':'+minutes+':'+seconds
+                        var mdy=month_str+' '+day+' '+year_two_digit
+                        var hms=hour+':'+minutes+':'+seconds
+                        var ymdhms=mdy+' '+hms
+                        this.date=ymdhms
+                        this.show=!this.show
+                    },
+                    check:function(){
+                        if(this.remain<0){
+                            this.article=this.article.substr(0,this.limit)
+                        }
+                    }
+                }
+            })
+        </script>
+    </body>
+</html>
